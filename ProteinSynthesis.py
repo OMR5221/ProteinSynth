@@ -217,6 +217,9 @@ def ProteinSynthesis_Sim(numSeconds, dnaSeq, maxPSNum, numCells):
 
     ps_cellLists = []
 
+    # Create a hash table by using a list to hold lists of cells indexed by their respective ps_startNum
+    # Pro: Efficiently begin the PS process for all cells with the same startNum
+    # Can use knight's tour to begin process for a group of cells with same startNum
     for i in range(maxPSNum):
 
         ps_cellLists.insert(i, [])
@@ -235,6 +238,7 @@ def ProteinSynthesis_Sim(numSeconds, dnaSeq, maxPSNum, numCells):
         ps_cellLists[aCell.ps_srtNum].append(aCell)
 
     ''' Create a balance tree of cells organized by process_StartNum
+    Those on left are ready to run protein synth and those on right are not?
     rootNum = maxPSNum / 2
     rootNode = Tree(rootNum)
 
