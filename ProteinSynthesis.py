@@ -140,7 +140,7 @@ class Vertex:
     def getWeight(self, nbrVert):
         return self.vertsConnectedTo[nbrVert]
 
-# ADT to hold Graph framework: Adjacency Matrix (Used for cells themselves)
+# ADT to hold Graph framework: Adjacency List (Used for coordinating knights tour)
 # Holds a dictionary of all Vertices
 class AL_Graph:
 
@@ -149,18 +149,50 @@ class AL_Graph:
         self.vertexList = {}
         self.numVertices = 0
 
+    def __contains__(self, n):
+        return n in self.vertexList
 
-    # Adds a Verte Node to Graph
-    def addVertex(self, value):
+    # Make iterating through VertexList values possible
+    def __iter__(self):
+        return iter(self.vertexList.values())
 
-    # Define a weighted connection between two Vertices
-    def addEdge(self, vert1, vert2, weight):
+    # Creates and adds a Vertex Node to Graph's Vertex List
+    def addVertex(self, key):
 
-    # Find a particular verte in the graph
+        newVert = Vertex(key)
+
+        # Add new Verte to this Graph
+        self.vertexList[key] = newVert
+
+        self.numVertices += 1
+
+        return newVert
+
+    # Find a particular vertex in the graph using key
     def getVertex(self, vertKey):
 
-    # Returns a list of all Vertices in the Graph
+        if vertKey in self.vertexList:
+            return self.vertexList[vertKey]
+
+        else:
+            return None
+
+    # Define a weighted connection between two Vertices
+    def addEdge(self, vert1Key, vert2Key, weight):
+
+        if vert1Key not in self.vertexList:
+            # Add the Verte to the Graph
+            vert1 = self.addVertex(vert1Key)
+
+        if vert2Key not in self.vertexList:
+            vert2 = self.addVertex(vert2Key)
+
+        # Update vert1.vertsConnectedTo dictionary
+        self.vertexList[vert1Key].addNeighbor(self.vertexList[vert2Key], weight)
+
+    # Returns a list of all Vertices by their key
     def getVertices(self):
+        return self.vertexList.keys()
 
 #Structure of each cells functions, time and quantity
 class Cell:
