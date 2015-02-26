@@ -116,6 +116,52 @@ class BioServer:
     def Disconnect(self):
         self.connected = False
 
+
+# Each Vertex uses a dictionary to hold adjacent vertices and weight
+class Vertex:
+    def __init__(self, key):
+        self.id = key
+        self.vertsConnectedTo = {}
+
+    def addNeighbor(self, nbrVert, connectWeight):
+
+        self.vertsConnectedTo[nbrVert] = connectWeight
+
+    def __str__(self):
+        return str(self.id) + " connected to: " + str([x.id for x in self.vertsConnectedTo])
+
+    # Returns the id for all neighbors for this Vertex
+    def getNeighbors(self):
+        return self.vertsConnectedTo.keys()
+
+    def getID(self):
+        return self.id
+
+    def getWeight(self, nbrVert):
+        return self.vertsConnectedTo[nbrVert]
+
+# ADT to hold Graph framework: Adjacency Matrix (Used for cells themselves)
+# Holds a dictionary of all Vertices
+class AL_Graph:
+
+    def __init__(self):
+        # Key: Vertex ID, Value: Vertex Object
+        self.vertexList = {}
+        self.numVertices = 0
+
+
+    # Adds a Verte Node to Graph
+    def addVertex(self, value):
+
+    # Define a weighted connection between two Vertices
+    def addEdge(self, vert1, vert2, weight):
+
+    # Find a particular verte in the graph
+    def getVertex(self, vertKey):
+
+    # Returns a list of all Vertices in the Graph
+    def getVertices(self):
+
 #Structure of each cells functions, time and quantity
 class Cell:
 
