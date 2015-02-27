@@ -195,8 +195,59 @@ class AL_Graph:
         return self.vertexList.keys()
 
 # Traverse the cell grouping board
-def knightsTour():
+# Find moves to allow knight to visit every square on the board once
+def cellGroupGraph(bdSize):
 
+    cgGraph = AL_Graph()
+
+    for row in range(bdSize):
+        for col in range(bdSize):
+            # Get a list index for the (row, col) value
+            currNodeIndex = convertCoord(row, col, bdSize)
+            # Get all positions this knight could potentially move to
+            newPositions = genLegalPositions(row, col, bdSize)
+
+            for position in newPositions:
+                newNodeIndex = convertCoord(position[0], position[1], bdSize)
+                cgGraph.addEdge(currNodeIndex, newNodeIndex)
+
+    return cgGraph
+
+# Convert a x,y coordinate into an index for list
+def convertCoord(x, y, bdSize):
+
+    index = (x * bdSize) + y
+
+    return index
+
+def genLegalPositions(x, y, bdSize):
+
+    newPositions = []
+
+    moveRules = [(-1, -2), (-1, 2), (-2, -1), (-2,  1),
+                 ( 1, -2), ( 1, 2), ( 2, -1), ( 2, -1)]
+
+    # Generate all possible new positions from th current position
+    for move in moveRules:
+
+        newX = x + move[0]
+        newY = y + move[1]
+
+        # Check if new position is actually possible on this board
+        if legalCoord(newX, bdSize) and legalCoord(newY, bdSize):
+
+            newPositions.append((newX, newY))
+
+    # Return all positions we could potentially move to
+    return newPositions
+
+def legalCoord(coord, bdSize):
+
+    if coord >= 0 and coord <= bdSize:
+        return True
+
+    else:
+        return False
 
 #Structure of each cells functions, time and quantity
 class Cell:
