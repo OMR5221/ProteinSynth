@@ -194,6 +194,10 @@ class AL_Graph:
     def getVertices(self):
         return self.vertexList.keys()
 
+# Traverse the cell grouping board
+def knightsTour():
+
+
 #Structure of each cells functions, time and quantity
 class Cell:
 
