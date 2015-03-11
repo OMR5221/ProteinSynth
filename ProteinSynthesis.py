@@ -194,9 +194,6 @@ class AL_Graph:
     def getVertices(self):
         return self.vertexList.keys()
 
-# Look at all potential dna sequences off of this cell's current one
-def seqLadder():
-
 #Structure of each cells functions, time and quantity
 class Cell:
 
