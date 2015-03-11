@@ -257,6 +257,7 @@ while showMenu:
     raw_input(menuSelection)
 
     if menuSelection == 1:
+        print("Connecting to the specified Server: ")
         ''' if myBioServer.connected == False:
             print("Initiating BioSQL Server Connection Process:\n")
             myBioServer.Connect()
@@ -265,18 +266,22 @@ while showMenu:
             print("\t%s as user %s" % (myBioServer.serverName, myBioServer.user)) '''
 
     elif menuSelection == 2:
+        print("Creating a Sub Database: ")
         # myBioServer.Create_SubDB()
 
     elif menuSelection == 3:
+        print("Connecting to Sub Database: ")
         ''' myBioServer.Connect_Server()
         myBioServer.Connect_DB()'''
 
     elif menuSelection == 4:
+        print("Fetching and Loading a Sequence: ")
         '''myBioServer.Connect_Server()
         myBioServer.Connect_DB()
         myCell.currDNASeq = myBioServer.FetchSeq()'''
 
     elif menuSelection == 5:
+        print("Starting Protein Synthesis Simulation: ")
         # ProteinSynthesis_Sim(100, str(seq_record.seq), 200, 15)
 
     else:
