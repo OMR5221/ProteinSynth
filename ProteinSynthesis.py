@@ -161,7 +161,7 @@ class AL_Graph:
 
         newVert = Vertex(key)
 
-        # Add new Verte to this Graph
+        # Add new Vertex to this Graph
         self.vertexList[key] = newVert
 
         self.numVertices += 1
@@ -181,7 +181,7 @@ class AL_Graph:
     def addEdge(self, vert1Key, vert2Key, weight):
 
         if vert1Key not in self.vertexList:
-            # Add the Verte to the Graph
+            # Add the Vertex to the Graph
             vert1 = self.addVertex(vert1Key)
 
         if vert2Key not in self.vertexList:
@@ -195,7 +195,33 @@ class AL_Graph:
         return self.vertexList.keys()
 
 # Look at all potential dna sequences off of this cell's current one
-def seqLadder():
+# Figure out the smallest number of transformations needed to turn the starting word into the ending word
+def seqLadder(dnaFile):
+
+    dnaDict = {}
+
+    dnaLadderGraph = AL_Graph()
+
+    # Read in a sequence to generate all possible iterations of the sequence
+    dnaFileIN = open(dnaFile, 'r')
+
+    for line in dnaFileIN:
+        dnaSeq = line[:-1]
+
+        for i in range(len(dnaSeq)):
+
+            # Generate key to categorie other sequences which call into this template
+            dnaKey = dnaSeq[:i] + '_' + dnaSeq[i+1:]
+
+            if dnaKey in dnaDict:
+                # Add the sequence as a value to this key
+                dnaDict[dnaKey].append(dnaSeq)
+            # Add as a new key
+            else:
+                dnaDict[dnaKey] = [dnaSeq]
+
+
+
 
 #Structure of each cells functions, time and quantity
 class Cell:
