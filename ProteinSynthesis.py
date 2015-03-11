@@ -92,8 +92,8 @@ class Cell:
     def __init__(self, id, dnaSeq, maxPSNum, maxMutNum):
         self.id = id
         self.startDNASeq = dnaSeq
-        self.currDNASeq = MutableSeq(dnaSeq, IUPAC.unambiguous_dna)
-        self.mrnaSeq
+        self.currDNASeq = dnaSeq
+        self.mrnaSeq = ""
         # self.ribosome = Ribosome()
         # self.mRNA = mRNA()
         # self.tRNA = tRNA()
@@ -138,7 +138,7 @@ class Cell:
         template_strand = coding_strand.reverse_complement()
 
         # Bio Python method
-        self.mrnaSeq = coding_strand.transcribe()
+        self.mrnaSeq = str(coding_strand.transcribe())
 
         # TRue Biological Process
         mRNA_strandB = template_strand.reverse_complement().transcribe()
@@ -146,7 +146,7 @@ class Cell:
 
     def Translation(self):
         # Find Proteins attributed to a mrnaSeq
-        messenger_rna = Seq(self.mrnaSeq, IUPAC.unambiguous_rna)
+        messenger_rna = Seq(str(self.mrnaSeq), IUPAC.unambiguous_rna)
 
         # Stop translation at first in frame stop codon as described in dna table
         messenger_rna.translate(to_stop=True)
@@ -161,9 +161,10 @@ class Cell:
         self.rnaSeq = []
         self.numPS += 1
 
-        # Replication of dna strand into sense (coding) strand and anti-sense strand (template)
-
         # Transcribe dna strand and find complement rna sequence via RNA polymerase
+        self.Transcription()
+
+        self.Translation()
 
     # Define Death of a cell by (changing graph color and removing resources and setting weight to 0)
     def Apoptosis(self):
@@ -171,11 +172,19 @@ class Cell:
 
     # Mutate dna sequence by lering nucleotides randomly
     def DNA_Damage(self, mutateNum):
-        '''
-        if self.mt_Num == mutateNum:
-            # Alter some nucleotides
-        '''
-        None
+
+        mutIndex = random.randrange(len(self.currDNASeq))
+
+        if self.currDNASeq[mutIndex] == 'A':
+            self.currDNASeq[mutIndex] = 'U'
+        elif self.currDNASeq[mutIndex] == 'U':
+            self.currDNASeq[mutIndex] = 'A'
+        elif self.currDNASeq[mutIndex] == 'C':
+            self.currDNASeq[mutIndex] = 'G'
+        elif self.currDNASeq[mutIndex] == 'G':
+            self.currDNASeq[mutIndex] = 'C'
+        else:
+            self.currDNASeq[mutIndex] = '_'
 
     def DNA_Repair(self):
         None
@@ -183,7 +192,7 @@ class Cell:
     def __iter__(self):
         return self.__iter__()
 
-def ProteinSynthesis_Sim(numSeconds, dnaSeq, maxPSNum, numCells):
+def ProteinSynthesis_Sim(numSeconds, dnaSeq, maxPSNum, numCells, maxMutNum):
 
     ps_cellLists = []
 
@@ -196,40 +205,28 @@ def ProteinSynthesis_Sim(numSeconds, dnaSeq, maxPSNum, numCells):
 
     for i in range(numCells):
 
-        aCell = Cell(i, dnaSeq, maxPSNum)
-        '''
-        if ps_cellLists[aCell.ps_srtNum] == None:
+        aCell = Cell(i, dnaSeq, maxPSNum, maxMutNum)
 
-            ps_cellLists[aCell.ps_srtNum] = []
-            ps_cellLists[aCell.ps_srtNum].append(aCell)
-
-        else:
-        '''
         ps_cellLists[aCell.ps_srtNum].append(aCell)
-
-    ''' Create a balance tree of cells organized by process_StartNum
-    Those on left are ready to run protein synth and those on right are not?
-    rootNum = maxPSNum / 2
-    rootNode = Tree(rootNum)
-
-    psTree = BinarySearchTree()
-    psTree.root = rootNode
-    '''
 
     for currentSecond in range(numSeconds):
 
         #  Check if a cell is ready to perform protein synthesis
-        genTime = GenPSTime(maxPSNum)
+        psTime = GenPSTime(maxPSNum)
 
-        # Run all cells whose startTime is less than the time Number generated
-        for i in range(genTime):
+        mutateTime = GenPSTime(maxPSNum)
+
+        for i in range(psTime):
             for cell in ps_cellLists[i]:
-                cell.ProteinSynthesis()
-                # print("Cell " + str(cell.id) + ": " + str(cell.rnaSeq))
+                if cell.ps_srtNum == psTime:
+                    cell.ProteinSynthesis()
+                #  Check if a cell had a mutation occur
+                elif cell.mt_Num == mutateTime:
+                    cell.DNA_Damage()
 
     for i in range(maxPSNum):
         for cell in ps_cellLists[i]:
-            print("Cell " + str(cell.id) + "(" + str(cell.numPS) + "): " + str(cell.rnaSeq))
+            print("Cell " + str(cell.id) + "(" + str(cell.numPS) + "): " + str(cell.mrnaSeq))
 
 def GenPSTime(maxPSNum):
 
@@ -242,8 +239,6 @@ showMenu = True
 menuSelection = 0
 
 # myBioServer = BioServer()
-
-# myCell = Cell()
 
 while showMenu:
     print("\n\n")
@@ -284,7 +279,7 @@ while showMenu:
 
     elif menuSelection == 5:
         print("Starting Protein Synthesis Simulation: \n")
-        # ProteinSynthesis_Sim(100, str(seq_record.seq), 200, 15)
+        ProteinSynthesis_Sim(100, "AGCT", 200, 15, 200)
 
     else:
         print("Error")
