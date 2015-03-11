@@ -73,7 +73,7 @@ class AL_Graph:
     def addEdge(self, vert1Key, vert2Key, weight):
 
         if vert1Key not in self.vertexList:
-            # Add the Verte to the Graph
+            # Add the Vertex to the Graph
             vert1 = self.addVertex(vert1Key)
 
         if vert2Key not in self.vertexList:
@@ -92,7 +92,7 @@ class Cell:
     def __init__(self, id, dnaSeq, maxPSNum, maxMutNum):
         self.id = id
         self.startDNASeq = dnaSeq
-        self.currDNASeq = dnaSeq
+        self.currDNASeq = list(dnaSeq)
         self.mrnaSeq = ""
         # self.ribosome = Ribosome()
         # self.mRNA = mRNA()
@@ -107,9 +107,10 @@ class Cell:
         self.replicate = False
         self.dnaDiff = 0
         self.ps_amtTime = 45
-        self.ps_srtNum = random.randrange(1, maxPSNum+1)
-        self.mt_Num = random.randrange(1, maxMutNum+1)
+        self.ps_srtNum = random.randrange(0, maxPSNum+1)
+        self.mt_Num = random.randrange(0, maxMutNum+1)
         self.numPS = 0
+        self.numMuts = 0
 
     def Respiration(self):
         None
@@ -134,7 +135,7 @@ class Cell:
         switching all T -> U.
         '''
 
-        coding_strand = Seq(self.currDNASeq, IUPAC.unambiguous_dna)
+        coding_strand = Seq(''.join(self.currDNASeq), IUPAC.unambiguous_dna)
         template_strand = coding_strand.reverse_complement()
 
         # Bio Python method
@@ -149,11 +150,11 @@ class Cell:
         messenger_rna = Seq(str(self.mrnaSeq), IUPAC.unambiguous_rna)
 
         # Stop translation at first in frame stop codon as described in dna table
-        messenger_rna.translate(to_stop=True)
+        messenger_rna.translate()
 
         # We can also specify our own stop codon
         # Use for our Simulation by splicing dna seq at various points?
-        messenger_rna.translate(stop_symbol="@")
+        # messenger_rna.translate(stop_symbol="@")
 
 
     def ProteinSynthesis(self):
@@ -171,7 +172,7 @@ class Cell:
         None
 
     # Mutate dna sequence by lering nucleotides randomly
-    def DNA_Damage(self, mutateNum):
+    def DNA_Damage(self):
 
         mutIndex = random.randrange(len(self.currDNASeq))
 
@@ -186,6 +187,8 @@ class Cell:
         else:
             self.currDNASeq[mutIndex] = '_'
 
+        self.numMuts += 1
+
     def DNA_Repair(self):
         None
 
@@ -199,14 +202,14 @@ def ProteinSynthesis_Sim(numSeconds, dnaSeq, maxPSNum, numCells, maxMutNum):
     # Create a hash table by using a list to hold lists of cells indexed by their respective ps_startNum
     # Pro: Efficiently begin the PS process for all cells with the same startNum
     # Can use knight's tour to begin process for a group of cells with same startNum
-    for i in range(maxPSNum):
+    for i in range(maxPSNum+1):
 
         ps_cellLists.insert(i, [])
 
     for i in range(numCells):
 
         aCell = Cell(i, dnaSeq, maxPSNum, maxMutNum)
-
+        print(aCell.ps_srtNum)
         ps_cellLists[aCell.ps_srtNum].append(aCell)
 
     for currentSecond in range(numSeconds):
@@ -218,19 +221,20 @@ def ProteinSynthesis_Sim(numSeconds, dnaSeq, maxPSNum, numCells, maxMutNum):
 
         for i in range(psTime):
             for cell in ps_cellLists[i]:
-                if cell.ps_srtNum == psTime:
-                    cell.ProteinSynthesis()
+
+                cell.ProteinSynthesis()
+
                 #  Check if a cell had a mutation occur
-                elif cell.mt_Num == mutateTime:
+                if cell.mt_Num == mutateTime:
                     cell.DNA_Damage()
 
     for i in range(maxPSNum):
         for cell in ps_cellLists[i]:
-            print("Cell " + str(cell.id) + "(" + str(cell.numPS) + "): " + str(cell.mrnaSeq))
+            print("Cell #" + str(cell.id) + "(Num PS: " + str(cell.numPS) + ", Num Damage: " + str(cell.numMuts) + "): " + str(cell.currDNASeq))
 
 def GenPSTime(maxPSNum):
 
-    return random.randrange(1, maxPSNum+1)
+    return random.randrange(0, maxPSNum+1)
 
 
 
