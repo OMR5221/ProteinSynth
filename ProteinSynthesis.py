@@ -13,17 +13,19 @@ class BioServer:
 
     def __init__(self):
         serverName = ""
-        driver = "MySQLdb"
-        user = "root"
-        passwd = "gtrhalo2"
-        host = "127.0.0.1"
-        db = "bioseqdb"
+        driverName = "MySQLdb"
+        userName = "root"
+        passwdName = "gtrhalo2"
+        hostName = "127.0.0.1"
+        dbName = "bioseqdb"
         connected = False
+        server = None
+        db = None
 
-    def get_Connected(self):
+    def get_ConnectStatus(self):
         return self.connected
 
-    def set_Connnected(self, connectAction):
+    def set_ConnnectStatus(self, connectAction):
         self.connected = connectAction
 
     def Connect_Server(self, inDriver, inUser, inPasswd, inHost, inDB):
@@ -33,7 +35,7 @@ class BioServer:
             defaultConnInput = raw_input()
 
             if defaultConnInput == "Y" or defaultConnInput == "y":
-                server = BioSeqDatabase.open_database(driver=self.driver, user=self.user, passwd=self.passwd, host=self.host, db=self.db)
+                self.server = BioSeqDatabase.open_database(driver=self.driverName, user=self.userName, passwd=self.passwdName, host=self.hostName, db=self.dbName)
             else:
                 print("Please enter the following BioSQL Server settings: \n")
                 print("\tDriver: \n")
@@ -47,67 +49,55 @@ class BioServer:
                 print("\tDatabase Name: \n")
                 inDB = raw_input()
                 print("Attempting Connection: \n" )
-                server = BioSeqDatabase.open_database(driver=self.driver, user=self.user, passwd=self.passwd, host=self.host, db=self.db)
+                self.server = BioSeqDatabase.open_database(driver=inDriver, user=inUser, passwd=inPasswd, host=inHost, db=inDB)
 
         else:
             print("Already connected to a server!")
 
     def Create_SubDB(self):
-    # 1. Create a sub database for sequences to be added to
-    server = BioSeqDatabase.open_database(driver="MySQLdb", user="root", passwd="gtrhalo2", host="127.0.0.1", db="bioseqdb")
 
-    db = server.new_database("orchids", description="Just to Test")
+        self.db = self.server.new_database("orchids", description="Just to Test")
 
     def Connect_DB(self):
 
         # Fetch the wanted sequences and load into the created sub database
-        db = server["orchids"]
-
-    def Connect_SvrDB(self):
-            server = BioSeqDatabase.open_database(driver="MySQLdb", user="root", passwd="gtrhalo2", host="127.0.0.1", db="bioseqdb")
-
-            # Fetch the wanted sequences and load into the created sub database
-            db = server["orchids"]
+        self.db = self.server["orchids"]
 
     def FetchSeq(self):
 
-        if connectedToServer:
-            # Get server Already connected to
-        else:
-            server = Connect_Server()
+        if not self.connected:
+            self.Connect_Server()
 
-        if connectedToDB:
-            # Get db connected to
-        else:
-            db = Connect_DB()
+        if self.db == None:
+            self.Connect_DB()
 
         # Fetch the following records from the Web
         handle = Entrez.efetch(db="nuccore", id="6273291,6273290,6273289", rettype="gb", retmode="text")
 
         # Load returns number of records handled into db
-        count = db.load(SeqIO.parse(handle, "genbank"))
+        count = self.db.load(SeqIO.parse(handle, "genbank"))
 
         print "Loaded %i records" % count
 
         handle.close()
 
         # Commit records to db to ensure they are entered
-        server.adaptor.commit()
+        self.server.adaptor.commit()
 
     def FetchSeq(self):
         # Extract sequences from sub database for use
         # Connect to "server" and open db
-        server = BioSeqDatabase.open_database(driver="MySQLdb", user="root", passwd="gtrhalo2", host="127.0.0.1", db="bioseqdb")
+        # server = BioSeqDatabase.open_database(driver="MySQLdb", user="root", passwd="gtrhalo2", host="127.0.0.1", db="bioseqdb")
 
         # select sub database
-        db = server["orchids"]
+        # db = server["orchids"]
 
-        print("This database contains %i records" % len(db))
+        print("This database contains %i records" % len(self.db))
 
         # find records for each identifier
         for identifier in ['6273290']:
             # Retrieve the sequence record by lookuping the Id
-            seq_record = db.lookup(gi=identifier)
+            seq_record = self.db.lookup(gi=identifier)
 
             print(seq_record.id, seq_record.description[:50] + "...")
 
@@ -131,30 +121,38 @@ while showMenu:
     print("4. Fetch and Load a Sequence\n")
     print("5. Run Protein Synthesis\n")
 
-     menuSelection = int(raw_input())
+    biosql_menuSelect = int(raw_input())
 
-    if menuSelection == 1:
-        if myBioServer.connected == False:
-            print("Initiating BioSQL Server Connection Process:\n")
-            myBioServer.Connect()
-        else:
-            print("You are already connected to a BioSQL Server: \n")
-            print("\t%s as user %s" % (myBioServer.serverName, myBioServer.user))
+    if biosql_menuSelect == 1:
 
-    elif menuSelection == 2:
-        myBioServer.Create_SubDB()
+        print("\t1. Connect to a BioSQL Server\n")
+        print("\t2. Create a Sub Database\n")
+        print("\t3. Connect to a Sub Database\n")
+        print("\t4. Fetch and Load a Sequence\n")
 
-    elif menuSelection == 3:
-        myBioServer.Connect_Server()
-        myBioServer.Connect_DB()
+        if biosql_menuSelect == 1:
 
-    elif menuSelection == 4:
-        myBioServer.Connect_Server()
-        myBioServer.Connect_DB()
-        myCell.currDNASeq = myBioServer.FetchSeq()
+            if myBioServer.connected == False:
+                print("Initiating BioSQL Server Connection Process:\n")
+                myBioServer.Connect()
+            else:
+                print("You are already connected to a BioSQL Server: \n")
+                print("\t%s as user %s" % (myBioServer.serverName, myBioServer.userName))
 
-    elif menuSelection == 5:
-        # ProteinSynthesis_Sim(100, str(seq_record.seq), 200, 15)
+        elif biosql_menuSelect == 2:
+            myBioServer.Create_SubDB()
+
+        elif biosql_menuSelect == 3:
+            myBioServer.Connect_Server()
+            myBioServer.Connect_DB()
+
+        elif biosql_menuSelect == 4:
+            myBioServer.Connect_Server()
+            myBioServer.Connect_DB()
+            myCell.currDNASeq = myBioServer.FetchSeq()
+
+        elif biosql_menuSelect == 5:
+            ProteinSynthesis_Sim(100, str(seq_record.seq), 200, 15)
 
     else:
         print("Error")
