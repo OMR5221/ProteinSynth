@@ -9,83 +9,6 @@ from Bio.Alphabet import IUPAC
 from Bio.Seq import MutableSeq
 from Bio.SeqRecord import SeqRecord
 
-# Each Vertex uses a dictionary to hold adjacent vertices and weight
-class Vertex:
-    def __init__(self, key):
-        self.id = key
-        self.vertsConnectedTo = {}
-
-    def addNeighbor(self, nbrVert, connectWeight):
-
-        self.vertsConnectedTo[nbrVert] = connectWeight
-
-    def __str__(self):
-        return str(self.id) + " connected to: " + str([x.id for x in self.vertsConnectedTo])
-
-    # Returns the id for all neighbors for this Vertex
-    def getNeighbors(self):
-        return self.vertsConnectedTo.keys()
-
-    def getID(self):
-        return self.id
-
-    def getWeight(self, nbrVert):
-        return self.vertsConnectedTo[nbrVert]
-
-# ADT to hold Graph framework: Adjacency List (Used for coordinating knights tour)
-# Holds a dictionary of all Vertices
-class AL_Graph:
-
-    def __init__(self):
-        # Key: Vertex ID, Value: Vertex Object
-        self.vertexList = {}
-        self.numVertices = 0
-
-    def __contains__(self, n):
-        return n in self.vertexList
-
-    # Make iterating through VertexList values possible
-    def __iter__(self):
-        return iter(self.vertexList.values())
-
-    # Creates and adds a Vertex Node to Graph's Vertex List
-    def addVertex(self, key):
-
-        newVert = Vertex(key)
-
-        # Add new Verte to this Graph
-        self.vertexList[key] = newVert
-
-        self.numVertices += 1
-
-        return newVert
-
-    # Find a particular vertex in the graph using key
-    def getVertex(self, vertKey):
-
-        if vertKey in self.vertexList:
-            return self.vertexList[vertKey]
-
-        else:
-            return None
-
-    # Define a weighted connection between two Vertices
-    def addEdge(self, vert1Key, vert2Key, weight):
-
-        if vert1Key not in self.vertexList:
-            # Add the Vertex to the Graph
-            vert1 = self.addVertex(vert1Key)
-
-        if vert2Key not in self.vertexList:
-            vert2 = self.addVertex(vert2Key)
-
-        # Update vert1.vertsConnectedTo dictionary
-        self.vertexList[vert1Key].addNeighbor(self.vertexList[vert2Key], weight)
-
-    # Returns a list of all Vertices by their key
-    def getVertices(self):
-        return self.vertexList.keys()
-
 #Structure of each cells functions, time and quantity
 class Cell:
 
@@ -244,51 +167,8 @@ menuSelection = 0
 
 # myBioServer = BioServer()
 
-while showMenu:
-    print("\n\n")
-    print("Welcome to Protein Synthesis Simulation!\n")
-    print("Please select an option below.\n\n")
-    print("1. Connect to a BioSQL Server\n")
-    print("2. Create a Sub Database\n")
-    print("3. Connect to a Sub Database\n")
-    print("4. Fetch and Load a Sequence\n")
-    print("5. Run Protein Synthesis\n")
-    print("\n")
-
-    menuSelection=int(raw_input())
-
-    if menuSelection == 1:
-        print("Connecting to the specified Server: \n")
-        ''' if myBioServer.connected == False:
-            print("Initiating BioSQL Server Connection Process:\n")
-            myBioServer.Connect()
-        else:
-            print("You are already connected to a BioSQL Server: \n")
-            print("\t%s as user %s" % (myBioServer.serverName, myBioServer.user)) '''
-
-    elif menuSelection == 2:
-        print("Creating a Sub Database: \n")
-        # myBioServer.Create_SubDB()
-
-    elif menuSelection == 3:
-        print("Connecting to Sub Database: \n")
-        ''' myBioServer.Connect_Server()
-        myBioServer.Connect_DB()'''
-
-    elif menuSelection == 4:
-        print("Fetching and Loading a Sequence: \n")
-        '''myBioServer.Connect_Server()
-        myBioServer.Connect_DB()
-        myCell.currDNASeq = myBioServer.FetchSeq()'''
-
-    elif menuSelection == 5:
-        print("Starting Protein Synthesis Simulation: \n")
-        ProteinSynthesis_Sim(100, "AGCT", 200, 15, 200)
-
-    else:
-        print("Error")
-
-
 # Create cells and run program to simulate
 # program has pieces which move in various ways through the knights tour problem
 # but are dictated by AI logic as to which path to take
+
+ProteinSynthesis_Sim(100, "AGCT", 200, 5, 200)
