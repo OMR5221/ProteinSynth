@@ -123,58 +123,57 @@ def ProteinSynthesis_Sim(numSeconds, dnaSeq, maxPSNum, numCells, maxMutNum):
     ps_cellLists = []
 
     # Create a hash table by using a list to hold lists of cells indexed by their respective ps_startNum
-    # Pro: Efficiently begin the PS process for all cells with the same startNum
-    # Can use knight's tour to begin process for a group of cells with same startNum
-    for i in range(maxPSNum+1):
 
+    # Create a list for each potential psStartNum
+    for i in range(maxPSNum+1):
         ps_cellLists.insert(i, [])
 
+    # Generate the required number of cells
     for i in range(numCells):
+        aCell = Cell(i, dnaSeq, maxPSNum, maxMutNum) # Create a cell
+        ps_cellLists[aCell.ps_srtNum].append(aCell) # Append cell to hash Tale by ps_StartNum
 
-        aCell = Cell(i, dnaSeq, maxPSNum, maxMutNum)
-        print(aCell.ps_srtNum)
-        ps_cellLists[aCell.ps_srtNum].append(aCell)
-
+    # Run the simulation for the specified number of iterations
     for currentSecond in range(numSeconds):
 
-        #  Check if a cell is ready to perform protein synthesis
-        psTime = GenTime(maxPSNum)
+        print("Current Second: " + str(currentSecond))
 
-        mutateTime = GenTime(maxPSNum)
+        psTime = GenTime(maxPSNum) # Generate a random PS Start Num
+        print("\tPSTime: " + str(psTime) + "\n")
+        lowHighVal = GenTime(1) # Will cells with ps_StartNum > or < the psTime run?
+        print("\tLow High Value: " + str(lowHighVal) + "\n")
+        mutateTime = GenTime(maxPSNum) # Gen a random Mutate Num
+        print("\tMutate Num: " + str(mutateTime) + "\n")
 
-        # Determine if low or high cell values should be run
-        lowHighVal = GenTime(1)
+        if lowHighVal == 0: # cells with ps_StartNum < the psTime will run
 
-        if lowHighVal == 0:
             for i in range(psTime):
-                
                 for cell in ps_cellLists[i]:
-
                     cell.ProteinSynthesis()
-
                     #  Check if a cell had a mutation occur
                     if cell.mt_Num == mutateTime:
                         cell.DNA_Damage()
-        else:
+
+                    print("Cell #" + str(cell.id) + "(PS StartNum: " + str(cell.ps_srtNum) + ", Num PS Runs: " + str(cell.numPS) + ", Num Damage Runs: " + str(cell.numMuts) + "): " + str(cell.currDNASeq))
+
+        else: # cells with ps_StartNum > the psTime will run
+
             for i in range(psTime, maxPSNum+1):
-
                 for cell in ps_cellLists[i]:
-
                     cell.ProteinSynthesis()
-
                     #  Check if a cell had a mutation occur
                     if cell.mt_Num == mutateTime:
                         cell.DNA_Damage()
+
+                    print("Cell #" + str(cell.id) + "(PS StartNum: " + str(cell.ps_srtNum) + ", Num PS Runs: " + str(cell.numPS) + ", Num Damage Runs: " + str(cell.numMuts) + "): " + str(cell.currDNASeq))
 
     for i in range(maxPSNum):
         for cell in ps_cellLists[i]:
-            print("Cell #" + str(cell.id) + "(Num PS: " + str(cell.numPS) + ", Num Damage: " + str(cell.numMuts) + "): " + str(cell.currDNASeq))
+            print("Cell #" + str(cell.id) + "(PS StartNum: " + str(cell.ps_srtNum) + ", Num PS Runs: " + str(cell.numPS) + ", Num Damage Runs: " + str(cell.numMuts) + "): " + str(cell.currDNASeq))
 
 def GenTime(maxPSNum):
 
     return random.randrange(0, maxPSNum+1)
-
-
 
 # Create A Menu to display
 showMenu = True
@@ -186,4 +185,4 @@ menuSelection = 0
 # program has pieces which move in various ways through the knights tour problem
 # but are dictated by AI logic as to which path to take
 
-ProteinSynthesis_Sim(100, "AGCT", 200, 5, 200)
+ProteinSynthesis_Sim(10, "AGCT", 200, 5, 200)
