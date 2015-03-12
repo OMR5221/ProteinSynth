@@ -94,19 +94,21 @@ class Cell:
     def Apoptosis(self):
         None
 
-    # Mutate dna sequence by lering nucleotides randomly
+    # Mutate dna sequence by altering nucleotides randomly
     def DNA_Damage(self):
 
         mutIndex = random.randrange(len(self.currDNASeq))
 
         if self.currDNASeq[mutIndex] == 'A':
-            self.currDNASeq[mutIndex] = 'U'
-        elif self.currDNASeq[mutIndex] == 'U':
+            self.currDNASeq[mutIndex] = 'T'
+        elif self.currDNASeq[mutIndex] == 'T':
             self.currDNASeq[mutIndex] = 'A'
         elif self.currDNASeq[mutIndex] == 'C':
             self.currDNASeq[mutIndex] = 'G'
         elif self.currDNASeq[mutIndex] == 'G':
             self.currDNASeq[mutIndex] = 'C'
+        elif self.currDNASeq[mutIndex] == 'U':
+            self.currDNASeq[mutIndex] = 'A'
         else:
             self.currDNASeq[mutIndex] = '_'
 
@@ -186,5 +188,5 @@ menuSelection = 0
 for seqRecord in SeqIO.parse("ls_orchid.fasta", "fasta"):
     # print(seqRecord.id)
     #print(seqRecord.seq)
-    ProteinSynthesis_Sim(10, str(seqRecord.seq), 200, 5, 200)
+    ProteinSynthesis_Sim(500, str(seqRecord.seq), 200, 5, 200)
     # print(len(seqRecord))
