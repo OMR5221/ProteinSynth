@@ -138,24 +138,39 @@ def ProteinSynthesis_Sim(numSeconds, dnaSeq, maxPSNum, numCells, maxMutNum):
     for currentSecond in range(numSeconds):
 
         #  Check if a cell is ready to perform protein synthesis
-        psTime = GenPSTime(maxPSNum)
+        psTime = GenTime(maxPSNum)
 
-        mutateTime = GenPSTime(maxPSNum)
+        mutateTime = GenTime(maxPSNum)
 
-        for i in range(psTime):
-            for cell in ps_cellLists[i]:
+        # Determine if low or high cell values should be run
+        lowHighVal = GenTime(1)
 
-                cell.ProteinSynthesis()
+        if lowHighVal == 0:
+            for i in range(psTime):
+                
+                for cell in ps_cellLists[i]:
 
-                #  Check if a cell had a mutation occur
-                if cell.mt_Num == mutateTime:
-                    cell.DNA_Damage()
+                    cell.ProteinSynthesis()
+
+                    #  Check if a cell had a mutation occur
+                    if cell.mt_Num == mutateTime:
+                        cell.DNA_Damage()
+        else:
+            for i in range(psTime, maxPSNum+1):
+
+                for cell in ps_cellLists[i]:
+
+                    cell.ProteinSynthesis()
+
+                    #  Check if a cell had a mutation occur
+                    if cell.mt_Num == mutateTime:
+                        cell.DNA_Damage()
 
     for i in range(maxPSNum):
         for cell in ps_cellLists[i]:
             print("Cell #" + str(cell.id) + "(Num PS: " + str(cell.numPS) + ", Num Damage: " + str(cell.numMuts) + "): " + str(cell.currDNASeq))
 
-def GenPSTime(maxPSNum):
+def GenTime(maxPSNum):
 
     return random.randrange(0, maxPSNum+1)
 
