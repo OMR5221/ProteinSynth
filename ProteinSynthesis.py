@@ -73,7 +73,7 @@ class Cell:
         messenger_rna = Seq(str(self.mrnaSeq), IUPAC.unambiguous_rna)
 
         # Stop translation at first in frame stop codon as described in dna table
-        messenger_rna.translate()
+        messenger_rna.translate(to_stop=True)
 
         # We can also specify our own stop codon
         # Use for our Simulation by splicing dna seq at various points?
@@ -136,7 +136,7 @@ def ProteinSynthesis_Sim(numSeconds, dnaSeq, maxPSNum, numCells, maxMutNum):
     # Run the simulation for the specified number of iterations
     for currentSecond in range(numSeconds):
 
-        print("Current Second: " + str(currentSecond))
+        print("\n\nCurrent Second: " + str(currentSecond)+"\n")
 
         psTime = GenTime(maxPSNum) # Generate a random PS Start Num
         print("\tPSTime: " + str(psTime) + "\n")
@@ -146,7 +146,6 @@ def ProteinSynthesis_Sim(numSeconds, dnaSeq, maxPSNum, numCells, maxMutNum):
         print("\tMutate Num: " + str(mutateTime) + "\n")
 
         if lowHighVal == 0: # cells with ps_StartNum < the psTime will run
-
             for i in range(psTime):
                 for cell in ps_cellLists[i]:
                     cell.ProteinSynthesis()
@@ -157,7 +156,6 @@ def ProteinSynthesis_Sim(numSeconds, dnaSeq, maxPSNum, numCells, maxMutNum):
                     print("Cell #" + str(cell.id) + "(PS StartNum: " + str(cell.ps_srtNum) + ", Num PS Runs: " + str(cell.numPS) + ", Num Damage Runs: " + str(cell.numMuts) + "): " + str(cell.currDNASeq))
 
         else: # cells with ps_StartNum > the psTime will run
-
             for i in range(psTime, maxPSNum+1):
                 for cell in ps_cellLists[i]:
                     cell.ProteinSynthesis()
@@ -185,4 +183,8 @@ menuSelection = 0
 # program has pieces which move in various ways through the knights tour problem
 # but are dictated by AI logic as to which path to take
 
-ProteinSynthesis_Sim(10, "AGCT", 200, 5, 200)
+for seqRecord in SeqIO.parse("ls_orchid.fasta", "fasta"):
+    # print(seqRecord.id)
+    #print(seqRecord.seq)
+    ProteinSynthesis_Sim(10, str(seqRecord.seq), 200, 5, 200)
+    # print(len(seqRecord))
