@@ -73,7 +73,7 @@ class Cell:
         messenger_rna = Seq(str(self.mrnaSeq), IUPAC.unambiguous_rna)
 
         # Stop translation at first in frame stop codon as described in dna table
-        messenger_rna.translate(to_stop=True)
+        messenger_rna.translate(to_stop=False)
 
         # We can also specify our own stop codon
         # Use for our Simulation by splicing dna seq at various points?
