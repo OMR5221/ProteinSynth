@@ -131,7 +131,7 @@ while showMenu:
     print("4. Fetch and Load a Sequence\n")
     print("5. Run Protein Synthesis\n")
 
-     menuSelection = int(raw_input())
+    menuSelection = int(raw_input())
 
     if menuSelection == 1:
         if myBioServer.connected == False:
