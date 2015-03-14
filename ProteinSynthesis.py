@@ -157,7 +157,12 @@ while showMenu:
     else:
         print("Error")
 
-
 # Create cells and run program to simulate
 # program has pieces which move in various ways through the knights tour problem
 # but are dictated by AI logic as to which path to take
+
+for seqRecord in SeqIO.parse("ls_orchid.fasta", "fasta"):
+    # print(seqRecord.id)
+    #print(seqRecord.seq)
+    ProteinSynthesis_Sim(500, str(seqRecord.seq), 200, 5, 200)
+    # print(len(seqRecord))
